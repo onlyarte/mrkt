@@ -6,6 +6,10 @@ type Query {
   categories: [Category!]!
 }
 
+type Mutation {
+  post(name: String!, description: String, parent: ID): Category!
+}
+
 type Category {
   _id: ID!
   name: String!
@@ -29,6 +33,18 @@ const resolvers = {
   Query: {
     title: () => 'MRKT',
     categories: () => categories,
+  },
+  Mutation: {
+    post: (parent, args) => {
+      const category = {
+        _id: `category-${categories.length}`,
+        name: args.name,
+        description: args.description,
+        parent: args.parent,
+      }
+      categories.push(category)
+      return category
+    },
   },
 }
 
