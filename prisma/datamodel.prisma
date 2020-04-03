@@ -5,3 +5,11 @@ type Category {
   description: String
   parent: Category
 }
+
+type User {
+  id: ID! @id
+  firstName: String!
+  lastName: String!
+  email: String! @unique
+  password: String!
+}
