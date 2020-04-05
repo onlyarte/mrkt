@@ -7,7 +7,15 @@ module.exports = {
   count: Int!
 }
 
+type AggregateItem {
+  count: Int!
+}
+
 type AggregateUser {
+  count: Int!
+}
+
+type AggregateWish {
   count: Int!
 }
 
@@ -21,6 +29,7 @@ type Category {
   name: String!
   description: String
   parent: Category
+  items(where: ItemWhereInput, orderBy: ItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Item!]
 }
 
 type CategoryConnection {
@@ -34,11 +43,24 @@ input CategoryCreateInput {
   name: String!
   description: String
   parent: CategoryCreateOneInput
+  items: ItemCreateManyWithoutCategoryInput
 }
 
 input CategoryCreateOneInput {
   create: CategoryCreateInput
   connect: CategoryWhereUniqueInput
+}
+
+input CategoryCreateOneWithoutItemsInput {
+  create: CategoryCreateWithoutItemsInput
+  connect: CategoryWhereUniqueInput
+}
+
+input CategoryCreateWithoutItemsInput {
+  id: ID
+  name: String!
+  description: String
+  parent: CategoryCreateOneInput
 }
 
 type CategoryEdge {
@@ -86,12 +108,14 @@ input CategoryUpdateDataInput {
   name: String
   description: String
   parent: CategoryUpdateOneInput
+  items: ItemUpdateManyWithoutCategoryInput
 }
 
 input CategoryUpdateInput {
   name: String
   description: String
   parent: CategoryUpdateOneInput
+  items: ItemUpdateManyWithoutCategoryInput
 }
 
 input CategoryUpdateManyMutationInput {
@@ -108,9 +132,27 @@ input CategoryUpdateOneInput {
   connect: CategoryWhereUniqueInput
 }
 
+input CategoryUpdateOneRequiredWithoutItemsInput {
+  create: CategoryCreateWithoutItemsInput
+  update: CategoryUpdateWithoutItemsDataInput
+  upsert: CategoryUpsertWithoutItemsInput
+  connect: CategoryWhereUniqueInput
+}
+
+input CategoryUpdateWithoutItemsDataInput {
+  name: String
+  description: String
+  parent: CategoryUpdateOneInput
+}
+
 input CategoryUpsertNestedInput {
   update: CategoryUpdateDataInput!
   create: CategoryCreateInput!
+}
+
+input CategoryUpsertWithoutItemsInput {
+  update: CategoryUpdateWithoutItemsDataInput!
+  create: CategoryCreateWithoutItemsInput!
 }
 
 input CategoryWhereInput {
@@ -165,6 +207,9 @@ input CategoryWhereInput {
   description_ends_with: String
   description_not_ends_with: String
   parent: CategoryWhereInput
+  items_every: ItemWhereInput
+  items_some: ItemWhereInput
+  items_none: ItemWhereInput
   AND: [CategoryWhereInput!]
   OR: [CategoryWhereInput!]
   NOT: [CategoryWhereInput!]
@@ -176,6 +221,295 @@ input CategoryWhereUniqueInput {
 
 scalar DateTime
 
+type Item {
+  id: ID!
+  createdAt: DateTime!
+  name: String!
+  description: String!
+  category: Category!
+  price: Float!
+}
+
+type ItemConnection {
+  pageInfo: PageInfo!
+  edges: [ItemEdge]!
+  aggregate: AggregateItem!
+}
+
+input ItemCreateInput {
+  id: ID
+  name: String!
+  description: String!
+  category: CategoryCreateOneWithoutItemsInput!
+  price: Float!
+}
+
+input ItemCreateManyWithoutCategoryInput {
+  create: [ItemCreateWithoutCategoryInput!]
+  connect: [ItemWhereUniqueInput!]
+}
+
+input ItemCreateOneInput {
+  create: ItemCreateInput
+  connect: ItemWhereUniqueInput
+}
+
+input ItemCreateWithoutCategoryInput {
+  id: ID
+  name: String!
+  description: String!
+  price: Float!
+}
+
+type ItemEdge {
+  node: Item!
+  cursor: String!
+}
+
+enum ItemOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  price_ASC
+  price_DESC
+}
+
+type ItemPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  name: String!
+  description: String!
+  price: Float!
+}
+
+input ItemScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  price: Float
+  price_not: Float
+  price_in: [Float!]
+  price_not_in: [Float!]
+  price_lt: Float
+  price_lte: Float
+  price_gt: Float
+  price_gte: Float
+  AND: [ItemScalarWhereInput!]
+  OR: [ItemScalarWhereInput!]
+  NOT: [ItemScalarWhereInput!]
+}
+
+type ItemSubscriptionPayload {
+  mutation: MutationType!
+  node: Item
+  updatedFields: [String!]
+  previousValues: ItemPreviousValues
+}
+
+input ItemSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ItemWhereInput
+  AND: [ItemSubscriptionWhereInput!]
+  OR: [ItemSubscriptionWhereInput!]
+  NOT: [ItemSubscriptionWhereInput!]
+}
+
+input ItemUpdateDataInput {
+  name: String
+  description: String
+  category: CategoryUpdateOneRequiredWithoutItemsInput
+  price: Float
+}
+
+input ItemUpdateInput {
+  name: String
+  description: String
+  category: CategoryUpdateOneRequiredWithoutItemsInput
+  price: Float
+}
+
+input ItemUpdateManyDataInput {
+  name: String
+  description: String
+  price: Float
+}
+
+input ItemUpdateManyMutationInput {
+  name: String
+  description: String
+  price: Float
+}
+
+input ItemUpdateManyWithoutCategoryInput {
+  create: [ItemCreateWithoutCategoryInput!]
+  delete: [ItemWhereUniqueInput!]
+  connect: [ItemWhereUniqueInput!]
+  set: [ItemWhereUniqueInput!]
+  disconnect: [ItemWhereUniqueInput!]
+  update: [ItemUpdateWithWhereUniqueWithoutCategoryInput!]
+  upsert: [ItemUpsertWithWhereUniqueWithoutCategoryInput!]
+  deleteMany: [ItemScalarWhereInput!]
+  updateMany: [ItemUpdateManyWithWhereNestedInput!]
+}
+
+input ItemUpdateManyWithWhereNestedInput {
+  where: ItemScalarWhereInput!
+  data: ItemUpdateManyDataInput!
+}
+
+input ItemUpdateOneRequiredInput {
+  create: ItemCreateInput
+  update: ItemUpdateDataInput
+  upsert: ItemUpsertNestedInput
+  connect: ItemWhereUniqueInput
+}
+
+input ItemUpdateWithoutCategoryDataInput {
+  name: String
+  description: String
+  price: Float
+}
+
+input ItemUpdateWithWhereUniqueWithoutCategoryInput {
+  where: ItemWhereUniqueInput!
+  data: ItemUpdateWithoutCategoryDataInput!
+}
+
+input ItemUpsertNestedInput {
+  update: ItemUpdateDataInput!
+  create: ItemCreateInput!
+}
+
+input ItemUpsertWithWhereUniqueWithoutCategoryInput {
+  where: ItemWhereUniqueInput!
+  update: ItemUpdateWithoutCategoryDataInput!
+  create: ItemCreateWithoutCategoryInput!
+}
+
+input ItemWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  category: CategoryWhereInput
+  price: Float
+  price_not: Float
+  price_in: [Float!]
+  price_not_in: [Float!]
+  price_lt: Float
+  price_lte: Float
+  price_gt: Float
+  price_gte: Float
+  AND: [ItemWhereInput!]
+  OR: [ItemWhereInput!]
+  NOT: [ItemWhereInput!]
+}
+
+input ItemWhereUniqueInput {
+  id: ID
+}
+
 scalar Long
 
 type Mutation {
@@ -185,12 +519,23 @@ type Mutation {
   upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
+  createItem(data: ItemCreateInput!): Item!
+  updateItem(data: ItemUpdateInput!, where: ItemWhereUniqueInput!): Item
+  updateManyItems(data: ItemUpdateManyMutationInput!, where: ItemWhereInput): BatchPayload!
+  upsertItem(where: ItemWhereUniqueInput!, create: ItemCreateInput!, update: ItemUpdateInput!): Item!
+  deleteItem(where: ItemWhereUniqueInput!): Item
+  deleteManyItems(where: ItemWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createWish(data: WishCreateInput!): Wish!
+  updateWish(data: WishUpdateInput!, where: WishWhereUniqueInput!): Wish
+  upsertWish(where: WishWhereUniqueInput!, create: WishCreateInput!, update: WishUpdateInput!): Wish!
+  deleteWish(where: WishWhereUniqueInput!): Wish
+  deleteManyWishes(where: WishWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -214,15 +559,23 @@ type Query {
   category(where: CategoryWhereUniqueInput!): Category
   categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
   categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
+  item(where: ItemWhereUniqueInput!): Item
+  items(where: ItemWhereInput, orderBy: ItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Item]!
+  itemsConnection(where: ItemWhereInput, orderBy: ItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ItemConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  wish(where: WishWhereUniqueInput!): Wish
+  wishes(where: WishWhereInput, orderBy: WishOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Wish]!
+  wishesConnection(where: WishWhereInput, orderBy: WishOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WishConnection!
   node(id: ID!): Node
 }
 
 type Subscription {
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
+  item(where: ItemSubscriptionWhereInput): ItemSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  wish(where: WishSubscriptionWhereInput): WishSubscriptionPayload
 }
 
 type User {
@@ -231,6 +584,7 @@ type User {
   lastName: String!
   email: String!
   password: String!
+  wishes(where: WishWhereInput, orderBy: WishOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Wish!]
 }
 
 type UserConnection {
@@ -240,6 +594,20 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  id: ID
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  wishes: WishCreateManyWithoutUserInput
+}
+
+input UserCreateOneWithoutWishesInput {
+  create: UserCreateWithoutWishesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutWishesInput {
   id: ID
   firstName: String!
   lastName: String!
@@ -296,6 +664,7 @@ input UserUpdateInput {
   lastName: String
   email: String
   password: String
+  wishes: WishUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
@@ -303,6 +672,25 @@ input UserUpdateManyMutationInput {
   lastName: String
   email: String
   password: String
+}
+
+input UserUpdateOneRequiredWithoutWishesInput {
+  create: UserCreateWithoutWishesInput
+  update: UserUpdateWithoutWishesDataInput
+  upsert: UserUpsertWithoutWishesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutWishesDataInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+}
+
+input UserUpsertWithoutWishesInput {
+  update: UserUpdateWithoutWishesDataInput!
+  create: UserCreateWithoutWishesInput!
 }
 
 input UserWhereInput {
@@ -376,6 +764,9 @@ input UserWhereInput {
   password_not_starts_with: String
   password_ends_with: String
   password_not_ends_with: String
+  wishes_every: WishWhereInput
+  wishes_some: WishWhereInput
+  wishes_none: WishWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
@@ -384,6 +775,163 @@ input UserWhereInput {
 input UserWhereUniqueInput {
   id: ID
   email: String
+}
+
+type Wish {
+  id: ID!
+  createdAt: DateTime!
+  item: Item!
+  user: User!
+}
+
+type WishConnection {
+  pageInfo: PageInfo!
+  edges: [WishEdge]!
+  aggregate: AggregateWish!
+}
+
+input WishCreateInput {
+  id: ID
+  item: ItemCreateOneInput!
+  user: UserCreateOneWithoutWishesInput!
+}
+
+input WishCreateManyWithoutUserInput {
+  create: [WishCreateWithoutUserInput!]
+  connect: [WishWhereUniqueInput!]
+}
+
+input WishCreateWithoutUserInput {
+  id: ID
+  item: ItemCreateOneInput!
+}
+
+type WishEdge {
+  node: Wish!
+  cursor: String!
+}
+
+enum WishOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type WishPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+}
+
+input WishScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  AND: [WishScalarWhereInput!]
+  OR: [WishScalarWhereInput!]
+  NOT: [WishScalarWhereInput!]
+}
+
+type WishSubscriptionPayload {
+  mutation: MutationType!
+  node: Wish
+  updatedFields: [String!]
+  previousValues: WishPreviousValues
+}
+
+input WishSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: WishWhereInput
+  AND: [WishSubscriptionWhereInput!]
+  OR: [WishSubscriptionWhereInput!]
+  NOT: [WishSubscriptionWhereInput!]
+}
+
+input WishUpdateInput {
+  item: ItemUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutWishesInput
+}
+
+input WishUpdateManyWithoutUserInput {
+  create: [WishCreateWithoutUserInput!]
+  delete: [WishWhereUniqueInput!]
+  connect: [WishWhereUniqueInput!]
+  set: [WishWhereUniqueInput!]
+  disconnect: [WishWhereUniqueInput!]
+  update: [WishUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [WishUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [WishScalarWhereInput!]
+}
+
+input WishUpdateWithoutUserDataInput {
+  item: ItemUpdateOneRequiredInput
+}
+
+input WishUpdateWithWhereUniqueWithoutUserInput {
+  where: WishWhereUniqueInput!
+  data: WishUpdateWithoutUserDataInput!
+}
+
+input WishUpsertWithWhereUniqueWithoutUserInput {
+  where: WishWhereUniqueInput!
+  update: WishUpdateWithoutUserDataInput!
+  create: WishCreateWithoutUserInput!
+}
+
+input WishWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  item: ItemWhereInput
+  user: UserWhereInput
+  AND: [WishWhereInput!]
+  OR: [WishWhereInput!]
+  NOT: [WishWhereInput!]
+}
+
+input WishWhereUniqueInput {
+  id: ID
 }
 `
       }

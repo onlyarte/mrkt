@@ -18,7 +18,7 @@ const login = async (parent, args, context, info) => {
   return { token, user }
 }
 
-const post = async (parent, args, context, info) => {
+const postCategory = (parent, args, context, info) => {
   const userId = getUserId(context)
   return context.prisma.createCategory({
     name: args.name,
@@ -27,4 +27,27 @@ const post = async (parent, args, context, info) => {
   })
 }
 
-module.exports = { signup, login, post }
+const postItem = (parent, args, context, info) => {
+  const userId = getUserId(context)
+  return context.prisma.createItem({
+    name: args.name,
+    description: args.description,
+    category: { connect: { id: args.category } },
+    price: args.price,
+  })
+}
+
+const wish = async (parent, args, context, info) => {
+  const userId = getUserId(context)
+  const isAdded = await context.prisma.$exists.wish({
+    item: { id: args.item },
+    user: { id: userId },
+  })
+  if (isAdded) throw new Error('Already added')
+  return context.prisma.createWish({
+    item: { connect: { id: args.item } },
+    user: { connect: { id: userId } },
+  })
+}
+
+module.exports = { signup, login, postCategory, postItem, wish }

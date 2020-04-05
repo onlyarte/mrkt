@@ -9,6 +9,14 @@ var models = [
     embedded: false
   },
   {
+    name: "Item",
+    embedded: false
+  },
+  {
+    name: "Wish",
+    embedded: false
+  },
+  {
     name: "User",
     embedded: false
   }

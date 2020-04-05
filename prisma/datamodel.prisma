@@ -4,6 +4,23 @@ type Category {
   name: String!
   description: String
   parent: Category
+  items: [Item!]!
+}
+
+type Item {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  name: String!
+  description: String!
+  category: Category!
+  price: Float!
+}
+
+type Wish {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  item: Item!
+  user: User!
 }
 
 type User {
@@ -12,4 +29,5 @@ type User {
   lastName: String!
   email: String! @unique
   password: String!
+  wishes: [Wish!]!
 }
