@@ -4,11 +4,15 @@ type Query {
 }
 
 type Mutation {
-  postCategory(name: String!, description: String, parent: ID): Category!
-  postItem(name: String!, description: String!, category: ID!, price: Float!): Item!
-  wish(item: ID!): Wish!
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
+  createCategory(name: String!, description: String, parent: ID): Category!
+  updateCategory(id: ID!, updates: CategoryInput!): Category
+  deleteCategory(id: ID!): Category
+  createItem(name: String!, description: String!, category: ID!, price: Float!): Item!
+  updateItem(id: ID!, updates: ItemInput!): Item
+  deleteItem(id: ID!): Item
+  wish(item: ID!): Wish!
 }
 
 type Subscription {
@@ -24,6 +28,12 @@ type Category {
   items: [Item!]!
 }
 
+input CategoryInput {
+  name: String
+  description: String
+  parent: ID
+}
+
 type Item {
   id: ID!
   createdAt: String!
@@ -31,6 +41,13 @@ type Item {
   description: String!
   category: Category!
   price: Float!
+}
+
+input ItemInput {
+  name: String
+  description: String
+  category: ID
+  price: Float
 }
 
 type Wish {

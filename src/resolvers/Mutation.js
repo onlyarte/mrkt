@@ -18,7 +18,7 @@ const login = async (parent, args, context, info) => {
   return { token, user }
 }
 
-const postCategory = (parent, args, context, info) => {
+const createCategory = (parent, args, context, info) => {
   const userId = getUserId(context)
   return context.prisma.createCategory({
     name: args.name,
@@ -27,7 +27,20 @@ const postCategory = (parent, args, context, info) => {
   })
 }
 
-const postItem = (parent, args, context, info) => {
+const updateCategory = (parent, args, context, info) => {
+  const userId = getUserId(context)
+  return context.prisma.updateCategory({
+    data: args,
+    where: { id: args.id }
+  })
+}
+
+const deleteCategory = (parent, args, context, info) => {
+  const userId = getUserId(context)
+  return context.prisma.deleteCategory({ id: args.id })
+}
+
+const createItem = (parent, args, context, info) => {
   const userId = getUserId(context)
   return context.prisma.createItem({
     name: args.name,
@@ -35,6 +48,19 @@ const postItem = (parent, args, context, info) => {
     category: { connect: { id: args.category } },
     price: args.price,
   })
+}
+
+const updateItem = (parent, args, context, info) => {
+  const userId = getUserId(context)
+  return context.prisma.updateItem({
+    data: args,
+    where: { id: args.id }
+  })
+}
+
+const deleteItem = (parent, args, context, info) => {
+  const userId = getUserId(context)
+  return context.prisma.deleteItem({ id: args.id })
 }
 
 const wish = async (parent, args, context, info) => {
@@ -50,4 +76,14 @@ const wish = async (parent, args, context, info) => {
   })
 }
 
-module.exports = { signup, login, postCategory, postItem, wish }
+module.exports = {
+  signup,
+  login,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  createItem,
+  updateItem,
+  deleteItem,
+  wish,
+}
