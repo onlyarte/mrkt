@@ -17,6 +17,7 @@ type Mutation {
 
 type Subscription {
   newCategory: Category
+  newItem(category: ID!): Item
 }
 
 type Category {
