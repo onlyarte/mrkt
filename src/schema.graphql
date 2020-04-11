@@ -25,7 +25,7 @@ type Category {
   name: String!
   description: String
   parent: Category
-  items: [Item!]!
+  items(filter: ItemFilterInput, orderBy: ItemOrderByInput, skip: Int, first: Int): Items!
 }
 
 input CategoryInput {
@@ -48,6 +48,28 @@ input ItemInput {
   description: String
   category: ID
   price: Float
+}
+
+type Items {
+  items: [Item!]!
+  count: Int!
+}
+
+input ItemFilterInput {
+  name_contains: String
+  description_contains: String
+  price: Float
+}
+
+enum ItemOrderByInput {
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  price_ASC
+  price_DESC
+  createdAt_ASC
+  createdAt_Desc
 }
 
 type Wish {
