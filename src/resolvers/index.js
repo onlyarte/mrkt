@@ -6,4 +6,6 @@ module.exports = {
   Item: require('./Item'),
   Wish: require('./Wish'),
   User: require('./User'),
+  Order: require('./Order'),
+  OrderItem: require('./OrderItem'),
 }

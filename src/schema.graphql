@@ -12,6 +12,8 @@ type Mutation {
   createItem(name: String!, description: String!, category: ID!, price: Float!): Item!
   updateItem(id: ID!, updates: ItemInput!): Item
   deleteItem(id: ID!): Item
+  createOrder(items: [OrderItemInput!]!, comment: String): Order!
+  updateOrder(id: ID!, updates: OrderInput): Order!
   wish(item: ID!): Wish!
 }
 
@@ -42,6 +44,7 @@ type Item {
   description: String!
   category: Category!
   price: Float!
+  availability: Int
 }
 
 input ItemInput {
@@ -80,12 +83,47 @@ type Wish {
   user: User!
 }
 
+type Order {
+  id: ID!
+  createdAt: String!
+  items: [OrderItem!]!
+  user: User!
+  status: OrderStatus!
+  comment: String
+}
+
+type OrderInput {
+  status: OrderStatus
+  comment: String
+}
+
+enum OrderStatus {
+  ORDERED,
+  SHIPPED,
+  DELIVERED,
+  CANCELED
+}
+
+type OrderItem {
+  id: ID!
+  order: Order!
+  item: Item!
+  price: Float!
+  comment: String
+}
+
+input OrderItemInput {
+  item: ID
+  comment: String
+}
+
 type User {
   id: ID!
   firstName: String!
   lastName: String!
   email: String!
   wishes: [Wish!]!
+  orders: [Order!]!
 }
 
 type AuthPayload {

@@ -16,6 +16,30 @@ type Item {
   price: Float!
 }
 
+type Order {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  items: [OrderItem!]!
+  user: User!
+  status: OrderStatus @default(value: ORDERED)
+  comment: String
+}
+
+enum OrderStatus {
+  ORDERED,
+  SHIPPED,
+  DELIVERED,
+  CANCELED
+}
+
+type OrderItem {
+  id: ID! @id
+  order: Order!
+  item: Item!
+  price: Float!
+  comment: String
+}
+
 type Wish {
   id: ID! @id
   createdAt: DateTime! @createdAt

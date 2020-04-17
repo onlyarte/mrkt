@@ -30,8 +30,8 @@ const createCategory = (parent, args, context, info) => {
 const updateCategory = (parent, args, context, info) => {
   const userId = getUserId(context)
   return context.prisma.updateCategory({
-    data: args,
-    where: { id: args.id }
+    data: args.updates,
+    where: { id: args.id },
   })
 }
 
@@ -53,14 +53,42 @@ const createItem = (parent, args, context, info) => {
 const updateItem = (parent, args, context, info) => {
   const userId = getUserId(context)
   return context.prisma.updateItem({
-    data: args,
-    where: { id: args.id }
+    data: args.updates,
+    where: { id: args.id },
   })
 }
 
 const deleteItem = (parent, args, context, info) => {
   const userId = getUserId(context)
   return context.prisma.deleteItem({ id: args.id })
+}
+
+const createOrder = async (parent, args, context, info) => {
+  const userId = getUserId(context)
+  const order = await context.prisma.createOrder({
+    user: { connect: { id: userId } },
+    comment: args.comment,
+  })
+  await Promise.all(
+    args.items.map(async ({ item: itemId, comment }) => {
+      const item = await context.prisma.item({ id: itemId })
+      return context.prisma.createOrderItem({
+        order: { connect: order.id },
+        item: { connect: item.id },
+        price: item.price,
+        comment,
+      })
+    })
+  )
+  return order
+}
+
+const updateOrder = (parent, args, context, info) => {
+  const userId = getUserId(context)
+  return context.prisma.updateItem({
+    data: args.updates,
+    where: { id: args.id },
+  })
 }
 
 const wish = async (parent, args, context, info) => {
@@ -85,5 +113,7 @@ module.exports = {
   createItem,
   updateItem,
   deleteItem,
+  createOrder,
+  updateOrder,
   wish,
 }
